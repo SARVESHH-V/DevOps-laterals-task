@@ -39,7 +39,7 @@ I have taken care of **Dockerization** and implementation of **Nginx reverse pro
    docker compose up -d
 Open the browser and go to:
 
-arduino
+
 Copy code
 http://localhost
 Problems Faced and Solutions
