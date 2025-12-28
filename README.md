@@ -1,64 +1,101 @@
-#DevOps Laterals Task
+# DevOps Laterals Task
 
-basically, i have implemented the LEVEL-1 of the project still a lot of optimization can be done but i have not done it and kept it for the last.
-I have taken care of dockerization and implementation of Nginx reverse proxy.
+Basically, I have implemented **LEVEL-1** of the project.  
+Still a lot of optimization can be done, but I have not done it and kept it for the last.  
+I have taken care of **Dockerization** and implementation of **Nginx reverse proxy**.
 
-##TECH STACK :
- ###Backend:
-    a) Rust
-    b) Actix-web
-    c) Diesel ORM
-    d) PostgreSQL
- ###Frontend: 
-    a) React
- ###DEVOPS
-    a) Docker
-    b) Docker Compose
-    c) Nginx (Reverse Proxy)
-    d) Git & GitHub
+---
 
+## Tech Stack
 
-##HOW TO RUN THE PROJECT : 
-    ###PRE-REQUISITES : 
-        1) DOCKER
-        2) DOCKER COMPOSE 
-        3) GIT
-    
-    ###STEPS : 
-        1) CLONE THE REPOSITORY 
-        2) RUN IN BASH "docker compose up -d"
-        3) open the browser and go to http://localhost
+### Backend
+- Rust  
+- Actix-web  
+- Diesel ORM  
+- PostgreSQL  
 
-##LIST OF ALL THE PROBLEMS FACED WITH SOLUTIONS : 
-    ###1) RUST COMPILE FAILURE INSIDE DOCKER 
-            INCOMPATIBLE WITH THE PRESENT RUST VERSION WE WERE NOT ABLE TO COMPILE PROPERLY (`time` crate – E0282)
-            WE SOLVED IT BY UPDATING THE 'TIME' CRATE TO '>=0.3.3.5'
-    ###2) CARGO FETCH AND BUILD FAILURE 
-            THEY FAILED DURING BUILD BECAUSE THEY WERE RUN BEFORE '/SRC' EXISTED IN THE IMAGE SO JJUST REORDERED THE DOCKERFILE STEPS
-    ###3) DIESEL COMMAND NOT FOUND 
-            DIESEL MIGRATION RUN FAILED ON WINDOWS AND INSIDE CONTAINER BECAUSE DIESEL CLI WAS NOT INSTALLED AND BACKEND RUNTIME DID NOT INCLUDE DIESEL SO WE MODIFIED THE DOCKER FILE ACCORDINGLY 
-    ###4) DIESLE MIGRATIONS DIRECTORY NOT FOUND 
-            UNABLE TO FIND MIGRATIONS DIRECTORY BECAUSE CONTAINERS ARE ISOLATED AND MIGRATIONS/ EXISTED IN THE PROJECT ROOT AND NOT INSIDE CONTAINERS SO WHAT WE DID WAS MOUNTED /BACKEND FILES INTO THE CONTAINER 
-    ###5) RELATIONS USERS DOES NOT EXIST 
-            LOGIN.REGISTER FAILED DUE TO MISSING TABLES
-            MIGRATIONS WERE NOT RUNNING SO, FIXED THAT 
-    ###6) DATABASE CONNECTION ERRORS
-            WAS USING LOCALHOST INSIDE THE DB CONTAINER WHICH IS NOT CORRECT 
-    ###7) A VERY SILLY MISTAKE FOR A LOT OF TIME I WAS CONFUSED BETWEEN FOLDER, SERVICE AND CONTAINER NAMES
-    ###8) PORT CONFUSION 
-            IN FIRST I WAS MAKING EVERYTHING LISTEN DIRECTLY ON PORTS 3000, 8080 AND 80 BUT LATER MADE ONLY PORT 80 (NGINX) EXPOSED INFRONT AND OTHERS ARE INTERNAL.
-            IN A WAY THAT NGINX ONLY DIRECTS THE REQUESTS TO FRONTEND AND BACKEND
-    ###9) SPA ROUTING 
-            THERE WAS A PROBLEM WHERE / WORKED BUT /LOGIN AND /REGISTER WERE FAILING 
-            REACT IS A SPA AND NGINX WAS TRYING TO FIND FILES THAT DOE
-            SO ADDED SPA FALLBACK IN FRONTEND NGINX.
-    ###10) AFTER SPA ROUTING NO EFFECT WAS SEEN
-            BECAUSE I WAS USING THE PRE-BUILD IMAGES SO I NEEDED TO OVERWRITE THE IMAGES AND PULL AGAIN 
-    ###11) REGISTER BUTTON WAS NOT WORKING
-            API ROUTING WAS NOT MATCHING THE REVERSE PROXY RULES SO HAD TO FIX THE ROUTING I FOUND THIS USING INSPECT AND WENT TO NETWORK. REQUEST AND RESPONSES HELPED ME SOLVE THIS 
-    ###12) LOGIN/REGISTER RETURNED 405
-            405 WAS SEEN IN POST REQUESTS 
-            BASICALLY THE BACKEND REQUESTS WERE ROUTED TO THE FRONTEND REQUESTS 
-            SO I ROUTED THAT REQUESTS TO /API/*
-    ###13) SOME BASIC GIT PROBLEMS WAS FACED BUT SOLVED IT AS EASE
-    ###14) IN THE START I WAS LOCALLY USING BUILD IN COMPOSE.YML FILES BUT LATED UNDERSTOOD THE PURPOSE OF ci/cd and STARTED TO CHANGE TO IMAEGE THAT WOULD HELP US IN A WAY BETTER MANNER.
+### Frontend
+- React  
+
+### DevOps
+- Docker  
+- Docker Compose  
+- Nginx (Reverse Proxy)  
+- Git & GitHub  
+
+---
+
+## How to Run the Project
+
+### Pre-requisites
+1. Docker  
+2. Docker Compose  
+3. Git  
+
+### Steps
+1. Clone the repository  
+2. Run the following command in bash:
+   ```bash
+   docker compose up -d
+Open the browser and go to:
+
+arduino
+Copy code
+http://localhost
+Problems Faced and Solutions
+1. Rust Compile Failure Inside Docker
+Incompatible with the present Rust version, we were not able to compile properly (time crate – E0282).
+Solved by updating the time crate to >=0.3.35.
+
+2. Cargo Fetch and Build Failure
+Build failed because cargo fetch and cargo build were run before /src existed in the image.
+Solved by reordering the Dockerfile steps.
+
+3. Diesel Command Not Found
+Diesel migration failed on Windows and inside the container because Diesel CLI was not installed and backend runtime did not include Diesel.
+Solved by modifying the Dockerfile accordingly.
+
+4. Diesel Migrations Directory Not Found
+Migrations directory was not found because containers are isolated and migrations/ existed only in the project root.
+Solved by mounting /backend files into the container.
+
+5. Relation Users Does Not Exist
+Login/Register failed due to missing tables.
+Solved by ensuring migrations were executed correctly.
+
+6. Database Connection Errors
+Used localhost inside the DB container, which is incorrect in Docker networking.
+Solved by using the service name instead.
+
+7. Service, Container, and Folder Name Confusion
+Spent significant time confused between folder names, service names, and container names.
+Solved by understanding Docker Compose service-based networking.
+
+8. Port Confusion
+Initially exposed ports 3000, 8080, and 80 directly.
+Later restricted exposure to only port 80 (Nginx), keeping frontend and backend ports internal.
+Nginx now routes all requests properly.
+
+9. SPA Routing Issue
+/ worked, but /login and /register failed.
+Nginx was trying to find physical files for SPA routes.
+Solved by adding SPA fallback configuration in frontend Nginx.
+
+10. SPA Routing Changes Not Reflecting
+No effect was seen after SPA routing fix because pre-built images were being used.
+Solved by rebuilding and pulling the updated images.
+
+11. Register Button Not Working
+API routing did not match reverse proxy rules.
+Solved by inspecting Network requests in browser DevTools and fixing routing rules.
+
+12. Login / Register Returned 405
+POST requests returned 405 because backend requests were routed to frontend.
+Solved by routing backend APIs under /api/*.
+
+13. Git Issues
+Faced some basic Git issues but resolved them easily.
+
+14. Compose File Usage Confusion
+Initially used local build in compose.yml.
+Later understood the CI/CD perspective and moved towards an image-based approach, which is more scalable and production-ready.
